@@ -46,6 +46,11 @@ class ExpertProfile extends Model
         return $this->current_status;
     }
     
-    // Pastikan atribut buatan ini selalu ikut dikirim saat API memanggil model ini
-    protected $appends = ['real_time_status'];
+        // Pastikan atribut buatan ini selalu ikut dikirim saat API memanggil model ini
+        protected $appends = ['real_time_status'];
+
+    public function clickLogs(): HasMany
+    {
+    return $this->hasMany(ClickLog::class);
+    }
 }
