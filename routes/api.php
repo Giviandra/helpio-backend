@@ -18,6 +18,9 @@ Route::get('/services', [ServiceDirectoryController::class, 'getServices']);
 Route::get('/experts', [ExpertProfileController::class, 'index']);
 Route::get('/experts/{id}', [ExpertProfileController::class, 'show']);
 
+// Route untuk mendapatkan link WhatsApp (Publik)
+Route::get('/experts/{id}/whatsapp', [ExpertProfileController::class, 'getWhatsappLink']);
+
 
 // --- AREA PRIVATE (Butuh Token Login) ---
 Route::middleware('auth:sanctum')->group(function () {

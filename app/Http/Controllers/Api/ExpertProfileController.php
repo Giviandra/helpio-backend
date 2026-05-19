@@ -70,4 +70,48 @@ class ExpertProfileController extends Controller
             'data' => $profile
         ]);
     }
+
+    // 4. Fitur Integrasi WhatsApp (Membuat link otomatis untuk chat WA)
+    public function getWhatsappLink($id)
+    {
+        // Cari user ahli berdasarkan ID
+        $expert = User::where('role', 'expert')->find($id);
+
+        if (!$expert) {
+            return response()->json(['message' => 'Ahli jasa tidak ditemukan'], 404);
+        }
+
+        $phone = $expert->phone_number;
+
+        // Validasi jika nomor HP belum diisi
+        if (!$phone) {
+            return response()->json(['message' => 'Ahli ini belum memasukkan nomor WhatsApp'], 400);
+        }
+
+        // --- PROSES FORMATTING NOMOR HP ---
+        // 1. Bersihkan karakter selain angka (misal ada spasi atau strip)
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        
+        // 2. Jika diawali angka '0', ganti dengan '62' (Kode negara Indonesia)
+        if (str_starts_with($phone, '0')) {
+            $phone = '62' . substr($phone, 1);
+        }
+
+        // --- PROSES PEMBUATAN PESAN OTOMATIS ---
+        $rawMessage = "Halo {$expert->name}, saya menemukan profil Anda di aplikasi Helpio. Saya ingin berkonsultasi mengenai jasa Anda, apakah sedang tersedia?";
+        
+        // Ubah teks menjadi format URL (mengubah spasi menjadi %20, dll)
+        $encodedMessage = urlencode($rawMessage);
+
+        // --- GABUNGKAN MENJADI LINK WA.ME ---
+        $whatsappLink = "https://wa.me/{$phone}?text={$encodedMessage}";
+
+        return response()->json([
+            'message' => 'Link WhatsApp berhasil dibuat',
+            'data' => [
+                'expert_name' => $expert->name,
+                'whatsapp_link' => $whatsappLink
+            ]
+        ]);
+    }
 }
