@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ServiceDirectoryController;
 use App\Http\Controllers\Api\ExpertProfileController; // TAMBAHKAN IMPORT INI
+use App\Http\Controllers\Api\WorkingHourController;
 
 // --- AREA PUBLIK ---
 Route::post('/register', [AuthController::class, 'register']);
@@ -29,5 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Route untuk mengupdate profil ahli (Hanya untuk ahli yang login)
     Route::post('/experts/profile', [ExpertProfileController::class, 'updateProfile']);
+
+    Route::post('/experts/working-hours', [WorkingHourController::class, 'updateSchedule']);
     
 });
