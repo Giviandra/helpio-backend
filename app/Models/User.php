@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; // 1. TAMBAHKAN IMPORT INI
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 // 2. TAMBAHKAN ROLE DAN PHONE_NUMBER DI SINI
 #[Fillable(['name', 'email', 'password', 'role', 'phone_number'])]
@@ -32,5 +33,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    // Relasi: Satu user bisa memiliki satu profil ahli
+    public function expertProfile(): HasOne
+    {
+        return $this->hasOne(ExpertProfile::class);
     }
 }

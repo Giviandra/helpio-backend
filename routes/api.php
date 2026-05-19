@@ -2,16 +2,32 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController; // Jangan lupa import Controller-nya
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ServiceDirectoryController;
+use App\Http\Controllers\Api\ExpertProfileController; // TAMBAHKAN IMPORT INI
 
-// 1. Route API Publik (Tidak perlu login untuk mengaksesnya)
+// --- AREA PUBLIK ---
 Route::post('/register', [AuthController::class, 'register']);
-Route::get('/categories', [ServiceDirectoryController::class, 'getCategories']);
-Route::get('/services', [ServiceDirectoryController::class, 'getServices']);    
+Route::post('/login', [AuthController::class, 'login']);
 
-// 2. Route API Private (Hanya bisa diakses kalau punya token/sudah login)
-// Kode bawaan Laravel yang sudah diperbaiki penulisan name()-nya
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum')->name('user');
+Route::get('/categories', [ServiceDirectoryController::class, 'getCategories']);
+Route::get('/services', [ServiceDirectoryController::class, 'getServices']);
+
+// Route untuk melihat daftar dan detail profil ahli (Publik)
+Route::get('/experts', [ExpertProfileController::class, 'index']);
+Route::get('/experts/{id}', [ExpertProfileController::class, 'show']);
+
+
+// --- AREA PRIVATE (Butuh Token Login) ---
+Route::middleware('auth:sanctum')->group(function () {
+    
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    })->name('user');
+
+    Route::post('/logout', [AuthController::class, 'logout']); 
+    
+    // Route untuk mengupdate profil ahli (Hanya untuk ahli yang login)
+    Route::post('/experts/profile', [ExpertProfileController::class, 'updateProfile']);
+    
+});
