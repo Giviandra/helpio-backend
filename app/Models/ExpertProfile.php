@@ -45,12 +45,24 @@ class ExpertProfile extends Model
         // (bisa 'available' atau 'on_job' sesuai setelan si ahli)
         return $this->current_status;
     }
-    
-        // Pastikan atribut buatan ini selalu ikut dikirim saat API memanggil model ini
-        protected $appends = ['real_time_status'];
 
     public function clickLogs(): HasMany
     {
-    return $this->hasMany(ClickLog::class);
+        return $this->hasMany(ClickLog::class);
     }
+
+    // Relasi: Profil ahli punya banyak review
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    // Membuat atribut buatan bernama 'average_rating'
+    public function getAverageRatingAttribute()
+    {
+        // Hitung rata-rata kolom 'rating' dari relasi reviews. Jika kosong, kembalikan 0.
+        return round($this->reviews()->avg('rating'), 1) ?? 0;
+    }
+
+    protected $appends = ['real_time_status', 'average_rating'];
 }

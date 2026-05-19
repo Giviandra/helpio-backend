@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ServiceDirectoryController;
 use App\Http\Controllers\Api\ExpertProfileController;
 use App\Http\Controllers\Api\WorkingHourController;
 use App\Http\Controllers\Api\ExpertStatisticController;
+use App\Http\Controllers\Api\ReviewController;
 
 // --- AREA PUBLIK ---
 Route::post('/register', [AuthController::class, 'register']);
@@ -26,6 +27,9 @@ Route::get('/experts/{id}/whatsapp', [ExpertProfileController::class, 'getWhatsa
 // Route untuk mencatat klik (Publik, dipanggil oleh Frontend secara diam-diam)
 Route::post('/experts/{id}/track-click', [ExpertStatisticController::class, 'trackClick']);
 
+// Route untuk melihat review ahli (Publik)
+Route::get('/experts/{id}/reviews', [ReviewController::class, 'getReviews']);
+
 
 // --- AREA PRIVATE (Butuh Token Login) ---
 Route::middleware('auth:sanctum')->group(function () {
@@ -44,5 +48,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Route untuk mendapatkan statistik klik (Hanya untuk ahli yang login melihat dashboard mereka)
     Route::get('/experts/stats', [ExpertStatisticController::class, 'getStats']);
+
+    // Route untuk memberikan review (Hanya untuk customer yang login)
+    Route::post('/experts/{id}/reviews', [ReviewController::class, 'store']);
     
 });
